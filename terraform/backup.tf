@@ -132,8 +132,8 @@ resource "aws_backup_selection" "main" {
   }
 
   resources = [
-  aws_rds_cluster.main.arn,
-  aws_efs_file_system.main.arn
+    aws_rds_cluster.main.arn,
+    aws_efs_file_system.main.arn
   ]
 }
 
@@ -220,10 +220,10 @@ resource "aws_security_group" "efs" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "NFS from EKS nodes"
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
+    description     = "NFS from EKS nodes"
+    from_port       = 2049
+    to_port         = 2049
+    protocol        = "tcp"
     security_groups = [aws_security_group.eks_nodes.id]
   }
 
@@ -374,27 +374,7 @@ resource "aws_iam_openid_connect_provider" "eks" {
   }
 }
 
-# Outputs
-output "backup_vault_arn" {
-  description = "Primary backup vault ARN"
-  value       = aws_backup_vault.main.arn
-}
-
-output "backup_vault_secondary_arn" {
-  description = "Secondary backup vault ARN"
-  value       = aws_backup_vault.secondary.arn
-}
-
-output "efs_file_system_id" {
-  description = "EFS file system ID"
-  value       = aws_efs_file_system.main.id
-}
-
-output "velero_bucket_name" {
-  description = "Velero S3 bucket name"
-  value       = aws_s3_bucket.velero.bucket
-}
-
+# Output
 output "velero_role_arn" {
   description = "Velero IAM role ARN"
   value       = aws_iam_role.velero.arn

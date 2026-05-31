@@ -203,3 +203,9 @@ variable "eks_api_allowed_cidrs" {
     "0.0.0.0/0"
   ]
 }
+
+variable "secondary_backup_region" {
+  description = "Secondary AWS region for backup replication"
+  type        = string
+  default     = "us-west-2"
+}

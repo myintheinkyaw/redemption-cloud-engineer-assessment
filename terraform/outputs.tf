@@ -79,14 +79,12 @@ output "aurora_master_password" {
 
 # Redis Outputs
 output "redis_endpoint" {
-  description = "Redis endpoint"
-  value       = aws_elasticache_cluster.main.cache_nodes[0].address
-  sensitive   = true
+  value     = aws_elasticache_replication_group.main.primary_endpoint_address
+  sensitive = true
 }
 
 output "redis_port" {
-  description = "Redis port"
-  value       = aws_elasticache_cluster.main.port
+  value = aws_elasticache_replication_group.main.port
 }
 
 output "redis_auth_token" {
@@ -165,14 +163,14 @@ output "velero_bucket_name" {
 output "security_group_ids" {
   description = "Map of security group IDs"
   value = {
-    alb          = aws_security_group.alb.id
-    eks_cluster  = aws_security_group.eks_cluster.id
-    eks_nodes    = aws_security_group.eks_nodes.id
-    aurora       = aws_security_group.aurora.id
-    redis        = aws_security_group.redis.id
-    efs          = aws_security_group.efs.id
+    alb           = aws_security_group.alb.id
+    eks_cluster   = aws_security_group.eks_cluster.id
+    eks_nodes     = aws_security_group.eks_nodes.id
+    aurora        = aws_security_group.aurora.id
+    redis         = aws_security_group.redis.id
+    efs           = aws_security_group.efs.id
     vpc_endpoints = aws_security_group.vpc_endpoints.id
-    bastion      = aws_security_group.bastion.id
+    bastion       = aws_security_group.bastion.id
   }
 }
 
@@ -180,9 +178,9 @@ output "security_group_ids" {
 output "kms_key_arns" {
   description = "Map of KMS key ARNs"
   value = {
-    aurora  = aws_kms_key.aurora.arn
-    backup  = aws_kms_key.backup.arn
-    efs     = aws_kms_key.efs.arn
+    aurora = aws_kms_key.aurora.arn
+    backup = aws_kms_key.backup.arn
+    efs    = aws_kms_key.efs.arn
   }
 }
 
@@ -203,7 +201,6 @@ output "s3_bucket_names" {
   description = "Map of S3 bucket names"
   value = {
     cloudfront_logs = aws_s3_bucket.cloudfront_logs.bucket
-    synthetics      = aws_s3_bucket.synthetics.bucket
     velero          = aws_s3_bucket.velero.bucket
   }
 }
@@ -212,24 +209,13 @@ output "s3_bucket_names" {
 output "vpc_endpoint_ids" {
   description = "Map of VPC endpoint IDs"
   value = {
-    s3               = aws_vpc_endpoint.s3.id
-    ecr_api          = aws_vpc_endpoint.ecr_api.id
-    ecr_dkr          = aws_vpc_endpoint.ecr_dkr.id
-    cloudwatch_logs  = aws_vpc_endpoint.cloudwatch_logs.id
+    s3                 = aws_vpc_endpoint.s3.id
+    ecr_api            = aws_vpc_endpoint.ecr_api.id
+    ecr_dkr            = aws_vpc_endpoint.ecr_dkr.id
+    cloudwatch_logs    = aws_vpc_endpoint.cloudwatch_logs.id
     cloudwatch_metrics = aws_vpc_endpoint.cloudwatch_metrics.id
-    sts              = aws_vpc_endpoint.sts.id
-    eks              = aws_vpc_endpoint.eks.id
-    elb              = aws_vpc_endpoint.elb.id
+    sts                = aws_vpc_endpoint.sts.id
+    eks                = aws_vpc_endpoint.eks.id
+    elb                = aws_vpc_endpoint.elb.id
   }
-}
-
-# Kubeconfig Output
-output "kubeconfig" {
-  description = "Kubectl config for the EKS cluster"
-  value = templatefile("${path.module}/templates/kubeconfig.tpl", {
-    cluster_name     = aws_eks_cluster.main.name
-    cluster_endpoint = aws_eks_cluster.main.endpoint
-    cluster_ca       = aws_eks_cluster.main.certificate_authority[0].data
-  })
-  sensitive = true
 }

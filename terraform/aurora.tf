@@ -1,12 +1,10 @@
 # Aurora PostgreSQL Configuration for Redemption Platform
 
-# Random password for master user
 resource "random_password" "aurora_master" {
   length  = 16
   special = false
 }
 
-# Aurora PostgreSQL Cluster
 resource "aws_rds_cluster" "main" {
   cluster_identifier = "${var.project_name}-aurora-cluster"
 
@@ -17,8 +15,8 @@ resource "aws_rds_cluster" "main" {
   master_username = var.database_username
   master_password = random_password.aurora_master.result
 
-  backup_retention_period     = var.backup_retention_days
-  preferred_backup_window     = "03:00-04:00"
+  backup_retention_period      = var.backup_retention_days
+  preferred_backup_window      = "03:00-04:00"
   preferred_maintenance_window = "sun:04:00-sun:05:00"
 
   db_subnet_group_name   = aws_db_subnet_group.main.name
@@ -27,10 +25,8 @@ resource "aws_rds_cluster" "main" {
   storage_encrypted = true
   kms_key_id        = aws_kms_key.aurora.arn
 
-  db_cluster_parameter_group_name =
-    aws_rds_cluster_parameter_group.main.name
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.main.name
 
-  # Serverless v2 configuration
   engine_mode = "provisioned"
 
   serverlessv2_scaling_configuration {
@@ -40,7 +36,6 @@ resource "aws_rds_cluster" "main" {
 
   iam_database_authentication_enabled = true
 
-  # Assessment friendly
   deletion_protection = false
 
   enabled_cloudwatch_logs_exports = [
@@ -55,13 +50,10 @@ resource "aws_rds_cluster" "main" {
   }
 }
 
-# Aurora PostgreSQL Cluster Instances
 resource "aws_rds_cluster_instance" "main" {
   count = 2
 
-  identifier =
-    "${var.project_name}-aurora-instance-${count.index + 1}"
-
+  identifier         = "${var.project_name}-aurora-instance-${count.index + 1}"
   cluster_identifier = aws_rds_cluster.main.id
 
   instance_class = "db.serverless"
@@ -72,21 +64,16 @@ resource "aws_rds_cluster_instance" "main" {
   publicly_accessible = false
 
   monitoring_interval = 60
-
-  monitoring_role_arn =
-    aws_iam_role.aurora_monitoring.arn
+  monitoring_role_arn = aws_iam_role.aurora_monitoring.arn
 
   tags = {
-    Name =
-      "${var.project_name}-aurora-instance-${count.index + 1}"
-
+    Name        = "${var.project_name}-aurora-instance-${count.index + 1}"
     Project     = var.project_name
     Environment = var.environment
     ManagedBy   = "terraform"
   }
 }
 
-# DB Subnet Group
 resource "aws_db_subnet_group" "main" {
   name = "${var.project_name}-aurora-subnet-group"
 
@@ -103,7 +90,6 @@ resource "aws_db_subnet_group" "main" {
   }
 }
 
-# KMS Key for Aurora Encryption
 resource "aws_kms_key" "aurora" {
   description             = "KMS key for Aurora PostgreSQL encryption"
   deletion_window_in_days = 30
@@ -122,18 +108,10 @@ resource "aws_kms_alias" "aurora" {
   target_key_id = aws_kms_key.aurora.key_id
 }
 
-# Aurora Parameter Group
 resource "aws_rds_cluster_parameter_group" "main" {
   name        = "${var.project_name}-aurora-parameter-group"
   family      = "aurora-postgresql15"
-
-  description =
-    "Custom parameter group for Redemption Platform Aurora PostgreSQL"
-
-  parameter {
-    name  = "shared_preload_libraries"
-    value = "pg_stat_statements,auto_explain"
-  }
+  description = "Custom parameter group for Redemption Platform Aurora PostgreSQL"
 
   parameter {
     name  = "log_statement"
@@ -153,7 +131,6 @@ resource "aws_rds_cluster_parameter_group" "main" {
   }
 }
 
-# Enhanced Monitoring IAM Role
 resource "aws_iam_role" "aurora_monitoring" {
   name = "${var.project_name}-aurora-monitoring-role"
 
@@ -181,22 +158,27 @@ resource "aws_iam_role" "aurora_monitoring" {
 }
 
 resource "aws_iam_role_policy_attachment" "aurora_monitoring" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
   role       = aws_iam_role.aurora_monitoring.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
-# CloudWatch Alarm for Aurora CPU
 resource "aws_cloudwatch_metric_alarm" "aurora_cpu" {
-  alarm_name          = "redemption-aurora-cpu-utilization"
+  alarm_name          = "${var.project_name}-aurora-cpu-utilization"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 2
-  metric_name        = "CPUUtilization"
-  namespace          = "AWS/RDS"
-  period             = 300
-  statistic          = "Average"
-  threshold          = 80
-  alarm_description  = "Aurora PostgreSQL CPU utilization is high"
-  alarm_actions      = [aws_sns_topic.alerts.arn]
+
+  metric_name = "CPUUtilization"
+  namespace   = "AWS/RDS"
+
+  period    = 300
+  statistic = "Average"
+  threshold = 80
+
+  alarm_description = "Aurora PostgreSQL CPU utilization is high"
+
+  alarm_actions = [
+    aws_sns_topic.alerts.arn
+  ]
 
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.main.id
@@ -210,18 +192,23 @@ resource "aws_cloudwatch_metric_alarm" "aurora_cpu" {
   }
 }
 
-# CloudWatch Alarm for Aurora Free Storage
 resource "aws_cloudwatch_metric_alarm" "aurora_storage" {
-  alarm_name          = "redemption-aurora-free-storage"
+  alarm_name          = "${var.project_name}-aurora-free-storage"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = 2
-  metric_name        = "FreeLocalStorage"
-  namespace          = "AWS/RDS"
-  period             = 300
-  statistic          = "Average"
-  threshold          = 10737418240 # 10 GB
-  alarm_description  = "Aurora PostgreSQL free storage is low"
-  alarm_actions      = [aws_sns_topic.alerts.arn]
+
+  metric_name = "FreeLocalStorage"
+  namespace   = "AWS/RDS"
+
+  period    = 300
+  statistic = "Average"
+  threshold = 10737418240
+
+  alarm_description = "Aurora PostgreSQL free storage is low"
+
+  alarm_actions = [
+    aws_sns_topic.alerts.arn
+  ]
 
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.main.id
@@ -232,41 +219,5 @@ resource "aws_cloudwatch_metric_alarm" "aurora_storage" {
     Project     = var.project_name
     Environment = var.environment
     ManagedBy   = "terraform"
-}
-}
-
-# SNS Topic for Alerts
-resource "aws_sns_topic" "alerts" {
-  name = "${var.project_name}-aurora-alerts"
-
-  tags = {
-    Name        = "${var.project_name}-alerts-topic"
-    Project     = var.project_name
-    Environment = var.environment
-    ManagedBy   = "terraform"
   }
-}
-
-# Outputs
-output "aurora_cluster_endpoint" {
-  description = "Aurora PostgreSQL cluster endpoint"
-  value       = aws_rds_cluster.main.endpoint
-  sensitive   = true
-}
-
-output "aurora_cluster_reader_endpoint" {
-  description = "Aurora PostgreSQL cluster reader endpoint"
-  value       = aws_rds_cluster.main.reader_endpoint
-  sensitive   = true
-}
-
-output "aurora_cluster_database_name" {
-  description = "Aurora PostgreSQL database name"
-  value       = aws_rds_cluster.main.database_name
-}
-
-output "aurora_master_password" {
-  description = "Aurora PostgreSQL master password"
-  value       = random_password.aurora_master.result
-  sensitive   = true
 }

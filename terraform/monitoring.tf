@@ -12,11 +12,6 @@ resource "aws_sns_topic" "alerts" {
   }
 }
 
-# Random ID for Unique Resources
-resource "random_id" "bucket_suffix" {
-  byte_length = 8
-}
-
 # AWS Managed Prometheus Workspace
 resource "aws_prometheus_workspace" "main" {
   alias = "${var.project_name}-prometheus"

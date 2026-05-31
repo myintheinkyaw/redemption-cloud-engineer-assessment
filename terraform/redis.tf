@@ -3,7 +3,7 @@
 # Redis Replication Group (Multi-AZ High Availability)
 resource "aws_elasticache_replication_group" "main" {
   replication_group_id          = "${var.project_name}-redis"
-  replication_group_description = "Redis replication group for ${var.project_name}"
+  description = "Redis replication group for ${var.project_name}"
 
   node_type      = var.redis_node_type
   engine         = "redis"

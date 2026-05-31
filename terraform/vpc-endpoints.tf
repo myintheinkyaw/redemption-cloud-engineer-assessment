@@ -6,7 +6,7 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.main.id
   service_name      = "com.amazonaws.ap-southeast-1.s3"
   vpc_endpoint_type = "Gateway"
-  route_table_ids   = [
+  route_table_ids = [
     aws_route_table.private_app_1a.id,
     aws_route_table.private_app_1b.id,
     aws_route_table.private_data_1a.id,
@@ -27,7 +27,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   service_name        = "com.amazonaws.ap-southeast-1.ecr.api"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [
+  subnet_ids = [
     aws_subnet.private_app_1a.id,
     aws_subnet.private_app_1b.id
   ]
@@ -48,7 +48,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   service_name        = "com.amazonaws.ap-southeast-1.ecr.dkr"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [
+  subnet_ids = [
     aws_subnet.private_app_1a.id,
     aws_subnet.private_app_1b.id
   ]
@@ -69,7 +69,7 @@ resource "aws_vpc_endpoint" "cloudwatch_logs" {
   service_name        = "com.amazonaws.ap-southeast-1.logs"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [
+  subnet_ids = [
     aws_subnet.private_app_1a.id,
     aws_subnet.private_app_1b.id
   ]
@@ -90,7 +90,7 @@ resource "aws_vpc_endpoint" "cloudwatch_metrics" {
   service_name        = "com.amazonaws.ap-southeast-1.monitoring"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [
+  subnet_ids = [
     aws_subnet.private_app_1a.id,
     aws_subnet.private_app_1b.id
   ]
@@ -111,7 +111,7 @@ resource "aws_vpc_endpoint" "sts" {
   service_name        = "com.amazonaws.ap-southeast-1.sts"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [
+  subnet_ids = [
     aws_subnet.private_app_1a.id,
     aws_subnet.private_app_1b.id
   ]
@@ -132,7 +132,7 @@ resource "aws_vpc_endpoint" "eks" {
   service_name        = "com.amazonaws.ap-southeast-1.eks"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [
+  subnet_ids = [
     aws_subnet.private_app_1a.id,
     aws_subnet.private_app_1b.id
   ]
@@ -153,7 +153,7 @@ resource "aws_vpc_endpoint" "elb" {
   service_name        = "com.amazonaws.ap-southeast-1.elasticloadbalancing"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
-  subnet_ids          = [
+  subnet_ids = [
     aws_subnet.private_app_1a.id,
     aws_subnet.private_app_1b.id
   ]

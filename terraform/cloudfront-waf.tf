@@ -151,7 +151,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs" {
   rule {
     id     = "expire-logs"
     status = "Enabled"
-
+    filter {}
     expiration {
       days = 90
     }
@@ -317,6 +317,7 @@ resource "aws_shield_protection" "cloudfront" {
 
 # Route53 Record for CloudFront
 resource "aws_route53_record" "cloudfront" {
+  count = var.route53_zone_id != "" ? 1 : 0
   zone_id = var.route53_zone_id
   name    = var.domain_name
   type    = "A"
