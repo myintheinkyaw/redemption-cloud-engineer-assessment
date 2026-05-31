@@ -1,16 +1,18 @@
 # The Redemption Platform
 
-Cloud Engineer Technical Assessment Submission
+## Cloud Engineer Technical Assessment Submission
 
 Author: Myint Hein Kyaw
 
 ---
 
-## Solution Overview
+# Overview
 
-The Redemption Platform is a cloud-native microservice architecture designed to support global hotel loyalty point redemption transactions.
+This repository contains my submission for the Cloud Engineer Technical Assessment.
 
-The solution is built on AWS and follows AWS Well-Architected Framework principles with a focus on:
+The solution demonstrates a production-ready cloud architecture for The Redemption Platform, a global hotel loyalty point redemption system designed to support secure, scalable, and highly available redemption transactions.
+
+The platform is built on AWS and follows the AWS Well-Architected Framework with a focus on:
 
 * Reliability
 * Scalability
@@ -18,11 +20,11 @@ The solution is built on AWS and follows AWS Well-Architected Framework principl
 * Operational Excellence
 * Cost Optimization
 
-The platform leverages Amazon EKS, Aurora PostgreSQL, ElastiCache Redis, CloudFront, AWS WAF, GitOps deployment practices, and Infrastructure as Code (Terraform).
+The implementation includes Infrastructure as Code (Terraform), Kubernetes deployment on Amazon EKS, GitOps workflows, observability, autoscaling, and disaster recovery capabilities.
 
 ---
 
-## Architecture Highlights
+# Architecture Highlights
 
 * Multi-AZ Deployment (ap-southeast-1)
 * Amazon EKS
@@ -30,102 +32,254 @@ The platform leverages Amazon EKS, Aurora PostgreSQL, ElastiCache Redis, CloudFr
 * Amazon ElastiCache Redis
 * Amazon CloudFront
 * AWS WAF
-* AWS Shield Advanced
 * GitOps with ArgoCD
-* Canary Deployments with Argo Rollouts
-* KEDA + HPA + Karpenter Autoscaling
-* AWS Managed Prometheus & Grafana
-* AWS Backup & Velero
+* Progressive Delivery with Argo Rollouts
+* Horizontal Pod Autoscaler (HPA)
+* KEDA Event-Driven Autoscaling
+* Karpenter Node Autoscaling
+* Prometheus Monitoring
+* Alertmanager Alerting
+* Velero Backup and Recovery
+* AWS Backup
 
 ---
 
-## Architecture Diagram
+# AWS Well-Architected Mapping
 
-Refer to:
+| Pillar                 | Implementation                                     |
+| ---------------------- | -------------------------------------------------- |
+| Reliability            | Multi-AZ EKS, Aurora PostgreSQL, Redis Replication |
+| Scalability            | HPA, KEDA, Karpenter, EKS Managed Node Groups      |
+| Security               | WAF, IAM Roles, Security Groups, Private Subnets   |
+| Operational Excellence | GitOps with ArgoCD, Terraform, Monitoring          |
+| Cost Optimization      | Karpenter, Spot Capacity Support, Autoscaling      |
+| Observability          | Prometheus, Alertmanager, ServiceMonitor           |
+| Disaster Recovery      | Velero Backups, AWS Backup                         |
+
+---
+
+# Architecture Diagram
+
+Architecture diagram is available at:
 
 architecture/redemption-architecture.png
 
 ---
 
-## Repository Structure
+# Repository Structure
 
 redemption-cloud-engineer-assessment/
+
+├── README.md
 ├── architecture/
 ├── docs/
 ├── kubernetes/
-├── terrasorm/
-└── .gtignore/
+│   ├── apps/
+│   ├── autoscaling/
+│   ├── dr/
+│   ├── gitops/
+│   └── observability/
+└── terraform/
+
 
 ---
 
-## Infrastructure Components
+# Infrastructure Components
 
-### Terraform
+## Terraform
 
-Infrastructure resources are provisioned using Terraform:
+Infrastructure resources are provisioned using Terraform.
 
-* VPC
-* Public / Private Subnets
+### Networking
+
+* Amazon VPC
+* Public Subnets
+* Private Application Subnets
+* Private Data Subnets
 * NAT Gateways
-* Application Load Balancer
+* VPC Endpoints
+
+### Compute
+
 * Amazon EKS
-* Aurora PostgreSQL
-* ElastiCache Redis
-* CloudFront & WAF
-* Monitoring
-* Backup Services
+* Managed Node Groups
+* Karpenter
 
-### Kubernetes
+### Database
 
-Kubernetes manifests include:
+* Amazon Aurora PostgreSQL
+* Amazon ElastiCache Redis
 
+### Security
+
+* AWS WAF
+* IAM Roles and Policies
+* Security Groups
+
+### Edge & Content Delivery
+
+* Amazon CloudFront
+* Application Load Balancer
+
+### Monitoring & Operations
+
+* Amazon Managed Prometheus
+* Amazon Managed Grafana
+* CloudWatch
+* SNS Notifications
+
+### Backup & Recovery
+
+* AWS Backup
+* Velero
+
+---
+
+# Kubernetes Components
+
+The Kubernetes deployment manifests include:
+
+### Application Layer
+
+* Namespace
 * Deployment
 * Service
 * Ingress
-* Horizontal Pod Autoscaler
+* ConfigMap
+* Secret
+
+### Autoscaling
+
+* Horizontal Pod Autoscaler (HPA)
 * KEDA ScaledObject
+* Karpenter NodePool
+* EC2NodeClass
+
+### GitOps
+
+* ArgoCD Application
 * Argo Rollout
-* Network Policies
-* Velero Backup Configuration
+
+### Observability
+
+* ServiceMonitor
+* Prometheus Agent
+* Alertmanager Configuration
+
+### Disaster Recovery
+
+* Velero Backup Schedule
 
 ---
 
-## Deployment Workflow
+# Deployment Workflow
+
 
 GitHub
-↓
+   ↓
 GitHub Actions
-↓
+   ↓
 Amazon ECR
-↓
+   ↓
 ArgoCD
-↓
+   ↓
 Amazon EKS
-↓
+   ↓
 Argo Rollouts (Canary Deployment)
+---
+# Deployment Guide
+## Terraform
+
+cd terraform
+terraform init
+terraform plan
+terraform apply
+
+## Kubernetes
+
+kubectl apply -f kubernetes/apps/the-redemption
+
+## GitOps
+
+kubectl apply -f kubernetes/gitops/argo-application.yaml
+---
+
+# Key Design Decisions
+
+### Why Amazon EKS?
+
+Amazon EKS provides a managed Kubernetes control plane with high availability, scalability, and integration with AWS services.
+
+### Why Aurora PostgreSQL?
+
+Aurora PostgreSQL provides high availability, automated backups, read replicas, and strong transactional consistency.
+
+### Why Redis?
+
+Redis improves application performance through low-latency caching and session storage.
+
+### Why ArgoCD?
+
+ArgoCD enables GitOps-based deployments and ensures Kubernetes clusters remain synchronized with Git repositories.
+
+### Why Argo Rollouts?
+
+Argo Rollouts enables progressive delivery strategies such as canary deployments, reducing deployment risk.
+
+### Why KEDA + HPA + Karpenter?
+
+This combination provides multi-layer autoscaling:
+
+* HPA for pod resource scaling
+* KEDA for event-driven scaling
+* Karpenter for node provisioning
+
+### Why Velero?
+
+Velero provides Kubernetes-native backup and restore capabilities to support disaster recovery objectives.
 
 ---
 
-## Documentation
-
-Detailed architecture and design decisions are available in:
-
-docs/The_Redemption_Architecture_Design.pdf
-
----
-
-## Assumptions
+# Assumptions
 
 * AWS Region: ap-southeast-1
 * Single Production Environment
 * Existing AWS Account
 * Existing Domain Ownership
 * Existing CI/CD Platform Access
+* Required AWS service quotas are available
+* Kubernetes add-ons and CRDs are installed before workload deployment
 
 ---
 
-## Author
+# Documentation
+Detailed architecture and design documentation are available at:
+
+docs/The_Redemption_Architecture_Design.pdf
+
+---
+
+# Validation Performed
+
+The following validation activities were completed:
+
+### Terraform
+
+
+terraform fmt -recursive -check
+terraform validate
+terraform plan
+
+
+### Kubernetes
+
+yamllint
+kubeconform
+kubectl dry-run validation
+
+---
+
+# Author
 
 Myint Hein Kyaw
-
-Cloud Engineer Technical Assessment
+Cloud Engineer Technical Assessment Submission
