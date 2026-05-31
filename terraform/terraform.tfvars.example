@@ -1,0 +1,63 @@
+# Terraform variables for Redemption Platform
+# Copy this file to terraform.tfvars and customize
+
+# Environment Configuration
+environment = "prod"
+aws_region = "ap-southeast-1"
+project_name = "redemption-platform"
+
+# Network Configuration
+vpc_cidr = "10.0.0.0/16"
+availability_zones = ["ap-southeast-1a", "ap-southeast-1b"]
+
+# Subnet CIDR Blocks (exact assessment architecture)
+public_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24"]
+private_app_subnet_cidrs = ["10.0.10.0/24", "10.0.20.0/24"]
+private_data_subnet_cidrs = ["10.0.30.0/24", "10.0.40.0/24"]
+
+# EKS Configuration
+eks_cluster_name = "redemption-eks-cluster"
+eks_version = "1.28"
+eks_node_instance_type = "t3.medium"
+eks_node_desired_size = 2
+eks_node_min_size = 1
+eks_node_max_size = 5
+
+# Aurora PostgreSQL Configuration
+database_name = "redemptiondb"
+database_username = "redemption_admin"
+database_engine_version = "15.3"
+
+# Redis Configuration
+redis_node_type = "cache.t3.micro"
+redis_engine_version = "7.0"
+
+# ALB Configuration
+alb_name = "redemption-alb"
+
+# CloudFront Configuration
+cloudfront_price_class = "PriceClass_200"
+
+# Domain Configuration
+domain_name = "redemption.example.com"
+route53_zone_id = "ZONE_ID_HERE" # Replace with actual Route53 zone ID
+
+# Feature Flags
+enable_monitoring = true
+enable_backup = true
+enable_waf = true
+enable_shield = true
+
+# Backup Configuration
+backup_retention_days = 30
+secondary_backup_region = "us-west-2"
+
+# Additional Tags
+tags = {
+  CostCenter   = "engineering"
+  Department   = "platform"
+  Application  = "redemption-service"
+  Compliance   = "pci-dss"
+  Owner        = "devops-team"
+  ManagedBy    = "terraform"
+}
