@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redemption-service
+  namespace: redemption
+  labels:
+    app.kubernetes.io/name: redemption
+    app.kubernetes.io/component: service
+    app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/part-of: redemption-platform
+    app.kubernetes.io/version: "1.0.0"
+    environment: production
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: redemption
+    app.kubernetes.io/component: app
+
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080

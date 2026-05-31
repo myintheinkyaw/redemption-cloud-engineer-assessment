@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redemption-config
+  namespace: redemption
+  labels:
+    app.kubernetes.io/name: redemption
+    app.kubernetes.io/component: app
+    app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/part-of: redemption-platform
+    app.kubernetes.io/version: "1.0.0"
+    environment: production
+data:
+  # Application Configuration
+  APP_ENV: "production"
+  LOG_LEVEL: "info"
+  APP_PORT: "8080"
+  # Database Configuration
+  DATABASE_HOST: "aurora-postgresql.cluster-xxxxx.ap-southeast-1.rds.amazonaws.com"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "redemptiondb"
+  DATABASE_SSL_MODE: "require"
+  DATABASE_POOL_MIN: "2"
+  DATABASE_POOL_MAX: "10"
+  DATABASE_CONNECTION_TIMEOUT: "30000"
+  # Redis Configuration
+  REDIS_HOST: "redemption-redis.xxxxx.cache.amazonaws.com"
+  REDIS_PORT: "6379"
+  REDIS_TLS_ENABLED: "true"
+  REDIS_CONNECTION_TIMEOUT: "5000"
+  REDIS_MAX_RETRIES: "3"
+  REDIS_RETRY_DELAY: "1000"
+  
+  # Monitoring Configuration
+  METRICS_ENABLED: "true"
+  PROMETHEUS_ENABLED: "true"
+  METRICS_PORT: "8080"
+  METRICS_PATH: "/metrics"
+  HEALTH_CHECK_PATH: "/health"
+  READINESS_CHECK_PATH: "/ready"
+  
+  # AWS Configuration
+  AWS_REGION: "ap-southeast-1"
+  AWS_SERVICE_ENDPOINT: ""
+  AWS_STS_REGIONAL_ENDPOINTS: "regional"
+  
+  # Application Settings
+  SESSION_TIMEOUT: "3600"
+  CACHE_TTL: "300"
+  RATE_LIMIT_ENABLED: "true"
+  RATE_LIMIT_REQUESTS: "100"
+  RATE_LIMIT_WINDOW: "60"
+  
+  # Logging Configuration
+  LOG_FORMAT: "json"
+  LOG_OUTPUT: "stdout"
+  LOG_SAMPLING_RATE: "1.0"
+  LOG_ADDITIONAL_FIELDS: "app=redemption,env=production"
+  
+  # Feature Flags
+  FEATURE_CANARY_ENABLED: "false"
+  FEATURE_MAINTENANCE_MODE: "false"
+  FEATURE_EXPERIMENTAL_APIS: "false"
+  
+  # External Services
+  EXTERNAL_API_TIMEOUT: "10000"
+  EXTERNAL_API_RETRIES: "3"
+  EXTERNAL_API_CIRCUIT_BREAKER_ENABLED: "true"
+  
+  # Security Settings
+  CORS_ALLOWED_ORIGINS: "https://*.redemption.example.com"
+  CORS_ALLOWED_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+  CORS_ALLOWED_HEADERS: "Content-Type,Authorization,X-Requested-With"
+  CORS_ALLOW_CREDENTIALS: "true"
+  
+  # Performance Tuning
+  HTTP_KEEP_ALIVE_TIMEOUT: "65000"
+  HTTP_HEADERS_TIMEOUT: "30000"
+  HTTP_IDLE_TIMEOUT: "180000"
+  HTTP_MAX_CONNECTIONS: "1000"
+  
+  # Application-specific Configuration
+  TRANSACTION_TIMEOUT: "30000"
+  BATCH_PROCESSING_SIZE: "100"
+  BATCH_PROCESSING_INTERVAL: "5000"
+  RETRY_POLICY_MAX_ATTEMPTS: "3"
+  RETRY_POLICY_BACKOFF_MULTIPLIER: "2"
+  RETRY_POLICY_INITIAL_DELAY: "1000"

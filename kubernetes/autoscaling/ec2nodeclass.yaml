@@ -1,0 +1,26 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: redemption
+  labels:
+    app.kubernetes.io/name: redemption
+    app.kubernetes.io/component: autoscaling
+    app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/part-of: redemption-platform
+spec:
+  amiFamily: AL2023
+  subnetSelectorTerms:
+  - tags:
+      karpenter.sh/discovery: redemption-cluster
+  securityGroupSelectorTerms:
+  - tags:
+      karpenter.sh/discovery: redemption-cluster
+  tags:
+    Environment: production
+    Project: redemption-platform
+    ManagedBy: terraform
+    app.kubernetes.io/name: redemption
+    app.kubernetes.io/component: node
+    app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/part-of: redemption-platform
+    karpenter.sh/discovery: redemption-cluster
