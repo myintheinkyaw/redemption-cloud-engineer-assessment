@@ -56,8 +56,6 @@ The implementation includes Infrastructure as Code (Terraform), Kubernetes deplo
 | Observability          | Prometheus, Alertmanager, ServiceMonitor           |
 | Disaster Recovery      | Velero Backups, AWS Backup                         |
 
----
-
 # Architecture Diagram
 
 Architecture diagram is available at:
@@ -81,8 +79,6 @@ redemption-cloud-engineer-assessment/
 │   └── observability/
 └── terraform/
 
-
----
 
 # Infrastructure Components
 
